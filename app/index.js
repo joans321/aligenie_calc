@@ -18,16 +18,17 @@ app.get('/', function(req, res) {
 });
 
 app.post('/', function(req, res) {
-    logger.verbose(JSON.stringify(req.body));
+    logger.verbose("Request Body : " + JSON.stringify(req.body));
 
     let requestBody = req.body;
     let sessionId = requestBody.sessionId;
+    let intentId = requestBody.intentId;
     let intentName = requestBody.intentName;
     let utterance = requestBody.utterance;
     let slotValues = requestBody.slotEntities;
 
     logger.info('user session : ' + sessionId);
-    logger.info('user utterance : ' + utterance);
+    logger.info('user utterance : ' + utterance + ', intentId : ' + intentId);
     
     let numbers = [];
     let ops = [];
@@ -43,6 +44,16 @@ app.post('/', function(req, res) {
     let result = 0.0;
     let resultStr = '';
     let resultFlag = false;
+    let responseBody = {
+        'returnCode': '0',
+        'returnErrorSolution': '',
+        'returnMessage': 'Sucess',
+        'returnValue': {
+            'reply': replyMessage,
+            'resultType': 'RESULT'
+        },
+    };
+
     if (ops.length == 1 && numbers.length == 2) {
         logger.log('debug', 'start calc for %s %s %s', numbers[0], ops[0], numbers[1]);
 
@@ -51,21 +62,31 @@ app.post('/', function(req, res) {
             result = result.toFixed(2);
         }
         replyMessage = '' + numbers[0] + ops[0] + numbers[1] + '等于' + result;
+        responseBody.returnValue.reply = replyMessage;
+
         logger.debug('calc result : ' + result);
     } else {
         logger.error('not support syntax');
-    }
- 
-    let responseBody = {
-        'returnCode': '0',
-        'returnErrorSolution': '',
-        'returnMessage': 'Sucess',
-        'returnValue': {
-            'reply': replyMessage,
-            'resultType': 'RESULT'
+        if (ops.length == 0) {
+            responseBody.returnValue.reply = '主人，请出题';
         }
-    };
-        
+        responseBody.returnValue.resultType = 'ASK_INF';
+        responseBody.returnValue.askedInfos = [
+            {
+                'parameterName': 'num1',
+                'intentId': intentId,
+            }, {
+                'parameterName': 'op',
+                'intentId': intentId,
+            }, {
+                'parameterName': 'num2',
+                'intentId': intentId,
+            },
+        ];
+    }
+
+    logger.verbose("Reply Body : " + JSON.stringify(responseBody));
+
     res.append('Content-Type', 'application/json');
     res.status(200).send(responseBody);
 
