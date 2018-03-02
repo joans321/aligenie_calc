@@ -36,8 +36,9 @@ const logger = winston.createLogger({
     format: combineFormat,
     transports: [
         new winston.transports.Console({
-            level: 'silly',
+            level: 'silly'
         }),
+
         new winston.transports.DailyRotateFile({
             filename: path.join(__dirname, "logs", "error-%DATE%.log"),
             datePattern: 'YYYY-MM-DD',
