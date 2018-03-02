@@ -5,7 +5,8 @@ node_js:
 
 install:
     - npm install -g yarn
-    - npm install -g codecov
+    - yarn global add codecov
+    - yarn global add istanbul
 
 script:
     - yarn install
