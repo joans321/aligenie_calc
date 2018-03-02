@@ -21,12 +21,12 @@ function isOperator(op) {
 }
 
 exports = module.exports = function calc(cmd) {
-    let argv = arguments
+    let argv = arguments;
     if (argv.length == 3 && isOperator(cmd)) {
         return OPERATOR[cmd](argv[1], argv[2]);
     }
     return 0;
-}
+};
 
-exports.OPERATOR = OPERATOR
-exports.isOperator = isOperator
+module.exports.OPERATOR = OPERATOR;
+module.exports.isOperator = isOperator;

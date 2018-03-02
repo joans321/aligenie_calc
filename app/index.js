@@ -1,17 +1,23 @@
-'use strict'
+'use strict';
 
-const express = require('express')
-const bodyParser = require('body-parser')
-const morgan = require('morgan')
-const calc = require('./calc')
-const logger = require('./logger')
+const express = require('express');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const calc = require('./calc');
+const logger = require('./logger');
 
 const app = express();
 
 
 app.set('port', (process.env.AleGeniePort || 9420));
-app.use(bodyParser.json({type: 'application/json'}));
-app.use(morgan('short', {stream: logger.stream}));
+
+app.use(bodyParser.json({
+    type: 'application/json'
+}));
+
+app.use(morgan('short', {
+    stream: logger.stream
+}));
 
 app.get('/', function(req, res) {
     res.redirect('https://blog.lisp4fun.com');
@@ -29,7 +35,7 @@ app.post('/', function(req, res) {
 
     logger.info('user session : ' + sessionId);
     logger.info('user utterance : ' + utterance + ', intentId : ' + intentId);
-    
+
     let numbers = [];
     let ops = [];
     for (var slotValue of slotValues) {
@@ -71,18 +77,16 @@ app.post('/', function(req, res) {
             responseBody.returnValue.reply = '主人，请出题';
         }
         responseBody.returnValue.resultType = 'ASK_INF';
-        responseBody.returnValue.askedInfos = [
-            {
-                'parameterName': 'num1',
-                'intentId': intentId,
-            }, {
-                'parameterName': 'op',
-                'intentId': intentId,
-            }, {
-                'parameterName': 'num2',
-                'intentId': intentId,
-            },
-        ];
+        responseBody.returnValue.askedInfos = [{
+            'parameterName': 'num1',
+            'intentId': intentId,
+        }, {
+            'parameterName': 'op',
+            'intentId': intentId,
+        }, {
+            'parameterName': 'num2',
+            'intentId': intentId,
+        }, ];
     }
 
     logger.verbose("Reply Body : " + JSON.stringify(responseBody));
@@ -100,8 +104,9 @@ app.use((err, req, res, next) => {
     next(err);
 });
 
-module.exports = app;
 
-app.listen(app.get('port'), function() {
+const server = app.listen(app.get('port'), function() {
     logger.info('AliGenie Calculator listening on port ' + app.get('port'));
 });
+
+module.exports = server;
