@@ -8,6 +8,7 @@ install:
     - npm install -g codecov
 
 script:
+    - yarn install
     - yarn test
     - istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
     - codecov --token="bebea94b-9ce7-4c72-839b-446443319c46"
