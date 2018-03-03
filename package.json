@@ -4,7 +4,8 @@
   "description": "AliGenie Calculator",
   "main": "app/index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha"
+    "test": "node_modules/.bin/mocha",
+    "start": "node app/index.js"
   },
   "repository": {
     "type": "git",
